@@ -19,3 +19,13 @@ const io = new IntersectionObserver((entries) => {
 }, { threshold: 0.12 });
 
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+const backToTop = document.querySelector('a[href="#top"]');
+
+backToTop?.addEventListener('click', (event) => {
+  event.preventDefault();
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
