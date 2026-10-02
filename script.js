@@ -29,3 +29,33 @@ backToTop?.addEventListener('click', (event) => {
     behavior: 'smooth'
   });
 });
+
+const joinForm = document.querySelector('.join-form');
+joinForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const status = joinForm.querySelector('.join-status');
+  const button = joinForm.querySelector('button[type="submit"]');
+  const data = new FormData(joinForm);
+  const interests = data.getAll('interest');
+  data.delete('interest');
+  data.set('interest', interests.join(', ') || 'Not specified');
+  data.set('_replyto', data.get('email'));
+  button.disabled = true;
+  status.classList.remove('error');
+  status.textContent = 'Sending…';
+  try {
+    const res = await fetch(joinForm.action.replace('formsubmit.co/', 'formsubmit.co/ajax/'), {
+      method: 'POST',
+      headers: { Accept: 'application/json' },
+      body: data
+    });
+    if (!res.ok) throw new Error();
+    joinForm.reset();
+    status.textContent = "Thank you! We got your info and will be in touch soon. ♡";
+  } catch {
+    status.classList.add('error');
+    status.textContent = 'Something went wrong. Please try again in a moment.';
+  } finally {
+    button.disabled = false;
+  }
+});
